@@ -5,82 +5,109 @@
 #include <iostream>
 #include <cmath>
 #include <stack>
+#include <queue>
 
 using namespace std;
 
-void printHelp();
-int syntaxCheck(string input);
+int calculate(string expression);
+string format(string expression);
+bool isAnOperator(string op);
 
 int main()
 {
-	string input;
+	string expression;
 	//Output welcome message and notice that help is available
 	while(true)
 	{
 		cout << "Please enter your equation:" << endl;
-		cout << "For help, please enter 'Help' to see list of operations" << endl;
-		getline(cin, input);
+		cout << "The following arithmetic operators are available:" << endl;
+		cout << "+, -, *, /, ^" << endl;
+		cout << "Additionally, there are the following trigonometric/logarithmic functions" << endl;
+		cout << "sin, cos, tan, cot, ln, log10." << endl;
+		cout << "Additionally, you may use () parenthesis and {} curly brackets." << endl;
+		getline(cin, expression);
+
+		//format string so multi char operators like sin, cos, etc. are one character
+		expression = format(expression);
 		
-		if(input == "Help")
-		{
-			printHelp();
-		}
-		else
-		{
-	
-			//check for syntactical errors
-			int flag = syntaxCheck(input);
-			
-			if(flag >= 0)
-			{
-			
-				//Calculate
-			
-			}
-	
-		}
+		cout << expression << endl;
+
+		double result = calculate(expression);
 	}
 	return 0;
 
 }
 
-//checks if equation follows proper syntax rules, ex: parentheses in proper places, operators in proper places
-int syntaxCheck(string input)
+string format(string expression)
 {
-	//char stack will be used to track () and {}
-	stack<char> syntax;
-	
-	//iterate over input equation, when ( or { is encountered, push into stack, pop only when ) or } is encountered respectively
-	for(int i = 0; i < input.size(); i++)
+	string formattedExpression;
+
+	for (int i = 0; i < expression.size(); i++)
 	{
-		
-		if(input[i] == '(') syntax.push(input[i]);
-		else if(input[i] == '{') syntax.push(input[i]);
-		
-		if(input[i] == ')' && syntax.top() == '(') syntax.pop();
-		else if(input[i] == '}' && syntax.top() == '{') syntax.pop();
-	
+		if (expression.substr(i, 3) == 'sin') formattedExpression.append("s");
+		if (expression.substr(i, 3) == 'cos') formattedExpression.append("c");
+		if (expression.substr(i, 3) == 'tan') formattedExpression.append("t");
+		if (expression.substr(i, 3) == 'cot') formattedExpression.append("v");
+		if (expression.substr(i, 3) == 'log') formattedExpression.append("l");
+		if (expression.substr(i, 2) == 'ln') formattedExpression.append("n");
+		else formattedExpression.append(expression[i]);
 	}
-	
-	//if there are any ( or { left in stack, then a corresponding ) or } wasn't found, so parentheses were invalid, report to user and try again
-	if(!(syntax.empty()))
+
+	return formattedExpression;
+
+}
+
+//checks if the string pulled from the expression is any of the operators this calculator uses
+bool isAnOperator(string op)
+{
+
+	switch (op)
 	{
-		cout << "Error: Invalid Parentheses/Brackets, please correct and try again." << endl;
-		return -1;
+		case "+":
+			return true;
+		case "-":
+			return true;
+		case "*":
+			return true;
+		case "/":
+			return true;
+		case "^":
+			return true;
+		case "s":
+			return true;
+		case "c":
+			return true;
+		case "t":
+			return true;
+		case "v":
+			return true;
+		case "l":
+			return true;
+		case "g":
+			return true;
+		default:
+			return false;
 	}
-	
+}
+
+//Uses a modified shunting yard algorithm to generate the solution to the expression, and gives an error if the given expression is invalid
+double calculate(string expression)
+{
+	//stack will be used to track operators
+	stack<char> operators;
+	//queue will hold the postfix expression, and then will be calculated into solution
+	queue<char> postfix;
+
+	for (int i = 0; i < expression.size(); i++)
+	{
+		//if the current point in the infix is an operator
+		if (expression[i].isAnOperator)
+		{
+			operators.push(expression[i]);
+		}
+
+	}
 	
 	
 	return 0;
-}
-
-void printHelp()
-{
-
-	cout << "The following arithmetic operators are available:" << endl;
-	cout << "+, -, *, /, ^" << endl;
-	cout << "Additionally, there are the following trigonometric/logarithmic functions" << endl;
-	cout << "sin, cos, tan, cot, ln, log10." << endl;
-	cout << "Additionally, you may use () parenthesis and {} curly brackets." << endl;
-
 }
