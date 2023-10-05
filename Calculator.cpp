@@ -2,14 +2,14 @@
 //CS 480: Advanced Software Engineering
 //Lab 1: Calculator
 
-#include <iostream>;
-#include <cmath>;
+#include <iostream>
+#include <cmath>
+#include <stack>
 
 using namespace std;
 
 void printHelp();
-string removeSpaces();
-int syntaxCheck();
+int syntaxCheck(string input);
 
 int main()
 {
@@ -18,107 +18,60 @@ int main()
 	while(true)
 	{
 		cout << "Please enter your equation:" << endl;
-		cout << "For help, please enter 'Help'" << endl;
-		getLine(cin, input);
+		cout << "For help, please enter 'Help' to see list of operations" << endl;
+		getline(cin, input);
 		
-		//remove spaces from input string
-		removeSpaces(input);
-	
 		if(input == "Help")
 		{
-	
 			printHelp();
-	
 		}
 		else
 		{
 	
 			//check for syntactical errors
-			input = syntaxCheck(input);
+			int flag = syntaxCheck(input);
+			
+			if(flag >= 0)
+			{
+			
+				//Calculate
+			
+			}
 	
 		}
 	}
 	return 0;
 
 }
-//function to remove all spaces from the input string, for easier parsing
-string removeSpaces(string input)
-{
-
-	int i = 0, j = 0;
-	while(input[i])
-	{
-	
-		if(str[i] != ' ') str[j++] = str[i];
-		i++
-	
-	}
-	str[j] = '\0';
-	return input;
-
-}
 
 //checks if equation follows proper syntax rules, ex: parentheses in proper places, operators in proper places
 int syntaxCheck(string input)
 {
-	int lParenthesis = 1, rParenthesis = 0;
-	int lBracket = 1, rBracket = 0;
+	//char stack will be used to track () and {}
+	stack<char> syntax;
+	
+	//iterate over input equation, when ( or { is encountered, push into stack, pop only when ) or } is encountered respectively
 	for(int i = 0; i < input.size(); i++)
 	{
-	
-		if(input[i] == '(') lParenthesis++;
-		if(input[i] == ')') rParenthesis++;
-		if(input[i] == '{') lBracket++;
-		if(input[i] == '}') rBracket++;
 		
-		//Checks if there are extra parentheses
-		if(lParenthesis == rParenthesis && i < input.size() - 1)
-		{
+		if(input[i] == '(') syntax.push(input[i]);
+		else if(input[i] == '{') syntax.push(input[i]);
 		
-			cout << "Error: Extra Parenthesis" << endl;
-			return 0;
-		}
-		//Checks if there is a misplaced closing parentheses
-		else if (lParenthesis < rParenthesis)
-		{
-		
-			cout << "Error: Misplaced closing parenthesis" << endl;
-			return 0;
-		}
-		//Checks for missing closing parentheses
-		else if(lParenthesis > rParenthesis && i == input.size() - 1)
-		{
-		
-			cout << "Error: Missing closing parenthesis" << endl;
-			return 0;
-		}
-		
-		//Checks if there are extra brackets
-		if(lBracket == rBracket && i < input.size() - 1)
-		{
-		
-			cout << "Error: Extra Bracket" << endl;
-			return 0;
-		}
-		//Checks if there is a misplaced closing bracket
-		else if (lBracket < rBracket)
-		{
-		
-			cout << "Error: Misplaced closing bracket" << endl;
-			return 0;
-		}
-		//Checks for missing closing bracket
-		else if(lBracket > rBracket && i == input.size() - 1)
-		{
-		
-			cout << "Error: Missing closing bracket" << endl;
-			return 0;
-		}
+		if(input[i] == ')' && syntax.top() == '(') syntax.pop();
+		else if(input[i] == '}' && syntax.top() == '{') syntax.pop();
 	
 	}
 	
+	//if there are any ( or { left in stack, then a corresponding ) or } wasn't found, so parentheses were invalid, report to user and try again
+	if(!(syntax.empty()))
+	{
+		cout << "Error: Invalid Parentheses/Brackets, please correct and try again." << endl;
+		return -1;
+	}
 	
-
+	
+	
+	return 0;
 }
 
 void printHelp()
