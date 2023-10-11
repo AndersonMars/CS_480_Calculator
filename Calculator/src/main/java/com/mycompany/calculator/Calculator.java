@@ -32,6 +32,7 @@ public class Calculator
             {
                 return "Thank you for using my calculator!";
             }
+            expression = formatExpression(expression);
             String postfix = shuntingYard(expression);
             String result = evaluate(postfix);
             //if there was a divide by zero error, notify user and let them try again
