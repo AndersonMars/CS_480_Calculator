@@ -15,8 +15,8 @@ public class Calculator
     
     public static void main(String[] args)
     {
-        String output = getInput();
-        System.out.println(output);
+            String output = getInput();
+            System.out.println(output);
     }
     
     private static String getInput()
@@ -26,6 +26,9 @@ public class Calculator
         
         while(true)
         {
+            //reset error
+            error = false;
+            
             System.out.println("Please Enter Your Equation or \"EXIT\" to exit the calculator:");
             String expression = scan.nextLine();
             if(expression.equals("EXIT"))
@@ -34,9 +37,40 @@ public class Calculator
             }
             expression = formatExpression(expression);
             String postfix = shuntingYard(expression);
+            //check if bad input
+            if(postfix.equals("Bad Input"))
+            {
+                System.out.println("You have entered an invalid expression. Please try again.");
+                getInput();
+            }
+            //detect extra (){}
+            for(int i = 0; i < postfix.length(); i++)
+            {
+                switch (postfix.charAt(i)) {
+                    case '(':
+                        System.out.println("Error: Mismatched Parenthesis. Please try again.");
+                        getInput();
+                        break;
+                    case ')':
+                        System.out.println("Error: Mismatched Parenthesis. Please try again.");
+                        getInput();
+                        break;
+                    case '{':
+                        System.out.println("Error: Mismatched Brackets. Please try again.");
+                        getInput();
+                        break;
+                    case '}':
+                        System.out.println("Error: Mistmatched Brackets. Please try again.");
+                        getInput();
+                        break;
+                }
+            }
             String result = evaluate(postfix);
             //if there was a divide by zero error, notify user and let them try again
-            if(error) System.out.println("There was an error with your previous calculation. Please try again");
+            if(error)
+            {
+                System.out.println("There was an error with your previous calculation. Please try again");
+            }
             else
             {
                 //close scanner and return
@@ -153,6 +187,11 @@ public class Calculator
                     postfix.append(stack.pop()).append(" ");
                 }
                 stack.pop(); //pop the {
+            }
+            //there was an incorrect input
+            else
+            {
+                return "Bad Input";
             }
         }
         
