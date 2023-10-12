@@ -5,8 +5,7 @@
 import java.util.*;
 import java.lang.*;
 import java.lang.Math;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.math.BigDecimal;
 
 public class Calculator
 {
@@ -15,7 +14,8 @@ public class Calculator
     public static void main(String[] args)
     {
             String output = getInput();
-            System.out.println(output);
+            if(output.equals("Thank you for using my calculator!")) System.out.println(output);
+            else System.out.println("= " + output);
     }
     
     private static String getInput()
@@ -345,7 +345,13 @@ public class Calculator
     
     private static String binaryMath(String val1, String val2, String operator)
     {
+        String output = "";
         double result;
+        
+        BigDecimal big1 = new BigDecimal(val2);
+        BigDecimal big2 = new BigDecimal(val1);
+        
+        BigDecimal bigResult = new BigDecimal(0);
         
         //the first value is the one that was on the bottom of the two in the stack, so it is val2
         double first = Double.parseDouble(val2);
@@ -354,19 +360,23 @@ public class Calculator
         switch(operator)
         {
             case "+":
-                result = first + second;
+                bigResult = big1.add(big2);
+                output = bigResult.toString();
                 break;
             case "-":
-                result = first - second;
+                bigResult = big1.subtract(big2);
+                output = bigResult.toString();
                 break;
             case "*":
-                result = first * second;
+                bigResult = big1.multiply(big2);
+                output = bigResult.toString();
                 break;
             case "/":
                 //check for division by zero
                 try
                 {
-                    result = first / second;
+                    bigResult = big1.divide(big2);
+                    output = bigResult.toString();
                     break;
                 }
                 catch(ArithmeticException ex)
@@ -376,12 +386,14 @@ public class Calculator
                 }
             case "^":
                 result = Math.pow(first, second);
+                output = String.valueOf(result);
                 break;
             default:
                 result = 0.0;
+                output = String.valueOf(result);
         }
         
-        return String.valueOf(result);
+        return output;
     }
     
     //Takes a expression string and turns into an expression string with white spaces between every number, operator, function and symbol, makes parsing significantly easier
