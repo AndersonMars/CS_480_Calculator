@@ -1,7 +1,6 @@
 //Marshall Anderson
 //CS 480
 //Lab 2: Calculator
-package com.mycompany.calculator;
 
 import java.util.*;
 import java.lang.*;
